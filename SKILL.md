@@ -16,7 +16,7 @@ description: 기준 픽셀아트 Pepe(파란 티셔츠, 연보라 배경, 손 �
 ## 작업 순서
 
 1. 사용자 요청에서 네 칸을 뽑는다: `OUTFIT`, `HAND`, `BACKGROUND`, `EXPRESSION`.
-   - `EXPRESSION`은 "표정 문구" 표에서 고른다 (씨익 / 활짝 / 실망 / 눈물만 / 오열). 말하지 않으면 기본(느끼한 미소)이다.
+   - `EXPRESSION`은 "표정 문구" 표에서 고른다 (씨익 / 활짝 / 실망 / 눈물만 / 오열 / 분노 / 소리침). 말하지 않으면 기본(느끼한 미소)이다.
    - `HAND`는 셋 중 하나다:
      - **없음**: 손 얘기가 없으면 손을 그리지 않는다 (기본값).
      - **든 물건**: 칼, 국자, 마이크, 잔…
@@ -82,7 +82,7 @@ same green Pepe head, slightly tilted, three-quarter view, heavy half-closed smu
 Do not change the face shape or expression.
 ```
 
-아래 다섯 가지는 `{FACE_LINE}`을 이 문구로 바꾸고, `{FACE_END}`는 모두 똑같이 `Do not change the head shape, size, position or tilt. Only the facial expression described above changes.`로 쓴다.
+아래 일곱 가지는 `{FACE_LINE}`을 이 문구로 바꾸고, `{FACE_END}`는 모두 똑같이 `Do not change the head shape, size, position or tilt. Only the facial expression described above changes.`로 쓴다.
 
 **씨익 (입꼬리만 살짝 올라간 웃음):** 사용자 확정 버전. 입꼬리 외에는 기본 얼굴과 똑같이 둔다. 눈을 옆으로 흘기거나 눈썹을 올리거나 입을 넓히면 너무 느끼해지니 넣지 않는다.
 ```
@@ -107,6 +107,16 @@ same green Pepe head shape, size, position and slight tilt, three-quarter view, 
 **오열 (엉엉 욺):**
 ```
 same green Pepe head shape, size, position and slight tilt, three-quarter view, same orange-brown lip color (#C8783A tone) with a dark outline. EXPRESSION: sobbing uncontrollably. The mouth is wide open in a loud wail showing a dark mouth interior, the eyes squeezed tightly shut with scrunched brows, and thick light-blue pixel tear streams pouring down both cheeks with a few tear drops flying off the face.
+```
+
+**분노 (화남):**
+```
+same green Pepe head shape, size, position and slight tilt, three-quarter view, same big black pupils with small white highlights, same wide orange-brown lips (#C8783A tone) with a dark outline. EXPRESSION: furious anger. Thick dark brows slanted sharply downward toward the center of the face, the eyelids narrowed into a hard glare with the pupils staring forward, a few small red anger vein marks on the forehead, and the mouth closed with the lips pressed tight and the corners pulled sharply downward into a hard scowl.
+```
+
+**소리침 (분노해서 고함):**
+```
+same green Pepe head shape, size, position and slight tilt, three-quarter view, same orange-brown lip color (#C8783A tone) with a dark outline. EXPRESSION: screaming at the top of his lungs in rage. The mouth is stretched wide open in a loud roar showing a dark mouth interior, the eyes wide and bulging with tiny pupils, thick dark brows slanted sharply downward, red anger vein marks on the forehead, and a few small spit droplets and short motion lines near the mouth.
 ```
 
 표정 주의:
@@ -196,3 +206,4 @@ CHANGE ONLY:
 - 실존 영화·게임·만화 캐릭터(히어로 등)는 상징적인 마스크·의상·로고를 그대로 넣지 않는다. 개인용이라고 해도 같다. 그런 요청이 오면 그 사실을 한 줄로 알리고, 분위기만 살린 새 디자인으로 그린다. 원작 색 배합·문양·로고를 그대로 쓰면 이미지 안전 필터(`moderation_blocked`)에 막히기도 한다. 막히면 우회하지 말고 원작 요소를 뺀 오리지널 디자인으로 한 번 다시 만든다.
 - 실제 국가 군복처럼 국기가 필요한 게 아니면 `no national flags or country insignia`를 옷 문구에 넣는다. 안 넣으면 엉뚱한 국기 패치가 생기곤 한다.
 - 글자가 들어갈 만한 소품(모자 리본, 명찰)은 글자가 깨져 나오므로 `no letters or readable text`를 덧붙인다.
+- 에너지 음료 캔처럼 상표가 있는 소품은 "no logo"라고만 써도 실제 로고 모양(예: M자, 발톱 무늬)이 그려질 수 있다. 무늬를 아예 빼고 `a completely plain, solid matte black cylinder ... no pattern, no stripes, no logo, no emblem, no letters`처럼 표면 전체가 민무늬라고 쓴다.
