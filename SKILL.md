@@ -32,8 +32,9 @@ description: 기준 픽셀아트 Pepe(파란 티셔츠, 연보라 배경, 손 �
       bash <이 스킬 폴더>/scripts/generate.sh <이름>_prompt.txt <이름>
       ```
       스크립트는 `assets/pepe_base.png`를 참조 이미지로 첨부해 `codex exec`를 호출하고, `<이름>.png`(원본 크기)와 `<이름>_512.png`(512x512)를 만든다.
-   3. `<이름>_512.png`를 열어 기준 이미지와 비교한다. 표정 외에 얼굴 모양이 바뀌었거나 캐릭터가 확대·이동했으면 `KEEP` 문단을 더 강하게 고쳐 `<이름>_v2`로 한 번 더 생성한다. 가장 흔한 실패는 캐릭터 확대(특히 모자·헬멧이 있을 때)이므로 Framing 줄의 수치는 빼지 않는다.
-   4. 실행이 막히면(권한 거부, codex 미설치, 로그인 만료) 우회하지 말고, 프롬프트를 주며 사용자가 Codex 앱에서 기준 이미지를 첨부해 직접 생성하도록 안내한다.
+   3. 스크립트가 끝나면 `scripts/check_framing.py`가 자동으로 구도를 점검해 PASS/WARN/SKIP을 출력한다 (입술 위치·폭으로 머리 이동·확대를 잰다. PIL이 없으면 건너뜀). WARN이면 재생성을 고려하고, PASS여도 아래처럼 눈으로 한 번 더 비교한다. SKIP은 입을 가린 경우라 눈으로만 확인한다. 표정을 바꾼 이미지는 입 모양이 달라지므로 `python3 scripts/check_framing.py <파일> --expr`로 허용 범위를 넓혀 잰다.
+   4. `<이름>_512.png`를 열어 기준 이미지와 비교한다. 표정 외에 얼굴 모양이 바뀌었거나 캐릭터가 확대·이동했으면 `KEEP` 문단을 더 강하게 고쳐 `<이름>_v2`로 한 번 더 생성한다. 가장 흔한 실패는 캐릭터 확대(특히 모자·헬멧이 있을 때)이므로 Framing 줄의 수치는 빼지 않는다.
+   5. 실행이 막히면(권한 거부, codex 미설치, 로그인 만료) 우회하지 말고, 프롬프트를 주며 사용자가 Codex 앱에서 기준 이미지를 첨부해 직접 생성하도록 안내한다.
    - 기본은 바로 생성한다. 사용자가 "프롬프트만" 달라고 하면 4단계를 건너뛴다. 생성할 때 기준 이미지와 프롬프트가 OpenAI로 전송된다.
 
 ## 기본값 (말하지 않은 칸)
@@ -119,6 +120,12 @@ same green Pepe head shape, size, position and slight tilt, three-quarter view, 
 same green Pepe head shape, size, position and slight tilt, three-quarter view, same orange-brown lip color (#C8783A tone) with a dark outline. EXPRESSION: screaming at the top of his lungs in rage. The mouth is stretched wide open in a loud roar showing a dark mouth interior, the eyes wide and bulging with tiny pupils, thick dark brows slanted sharply downward, red anger vein marks on the forehead, and a few small spit droplets and short motion lines near the mouth.
 ```
 
+**표정 세트 (여러 표정을 한 번에):** 사용자가 "표정 전부", "표정 세트", "여러 표정으로"라고 하면 `generate_set.py`를 쓴다. 기본 표정 프롬프트(`<이름>_prompt.txt`)를 먼저 만든 뒤, 옷·손·배경은 그대로 두고 `- Face:` 줄만 바꿔 7장을 병렬 생성하고 각 장의 구도를 점검한다. 표정 문구는 `scripts/expressions.json`에 있다(위 표와 같은 내용). 이 문구를 고치면 두 곳을 같이 고친다.
+```bash
+python3 <이 스킬 폴더>/scripts/generate_set.py <이름>_prompt.txt <이름> [smirk grin disappointed tears sob angry scream]
+```
+표정 키를 생략하면 7개 전부, 일부만 적으면 그것만 만든다. 결과는 `<이름>_<표정키>_512.png`다. 병렬 7장은 Codex 사용량을 많이 쓰니 사용자가 표정 여러 장을 원할 때만 쓴다.
+
 표정 주의:
 - 눈물과 입 모양이 큰 표정(활짝, 오열)은 머리가 커지거나 이동하기 쉽다. 생성 후 Framing 수치(머리 위 17%, 오른쪽 87%, 턱 60%)가 지켜졌는지 꼭 비교한다.
 - 가면이 얼굴 전체를 덮으면 표정이 보이지 않는다. 그럴 땐 표정 칸을 무시하고 사용자에게 한 줄로 알린다.
@@ -195,6 +202,20 @@ CHANGE ONLY:
 - Outfit: a white astronaut spacesuit with an orange collar ring and small mission patches, no helmet so the face stays visible
 - Background: dark outer space with a ringed purple planet, small pixel stars and a distant galaxy
 ```
+
+## 제복 예시: 대한민국 육군 (참고 사진 기준, 사용자 확정)
+
+참고 사진을 받아 옷 디테일만 옮긴 사례다. 같은 요청(육군 병사)이면 아래 `Outfit` 문구를 그대로 쓴다(사용자 확정). 사진에 없던 부분(계급 모양 등)을 임의로 바꾸지 않는다. 무늬는 큼직하고 거친 블록으로, 둥근 단추는 전부 없앤 버전이다. 배경은 요청대로 바꾼다 (예: 해 질 녘 부대 정문).
+
+```
+- Outfit: a South Korean army enlisted soldier's combat uniform. On the head, a plain dark black-olive wool beret: a flat round soft cap with a matte felt-like surface, tilted slightly, with a thin black leather band around the bottom edge resting on the forehead just above the eyelids without covering the eyes. The whole face, eyes and lips stay fully visible at the same size. On the front-left of the beret (the viewer's right side of the beret front) sits a large, clearly drawn, detailed badge, about 11% of the image width wide and 10% of the image height tall, shaped like a tall arch (flat bottom, rounded top) with a dark forest-green felt backing and a thin teal outline. On the badge: two golden-yellow laurel leaf branches curving up the left and right sides like a wreath, a round gold-rimmed circle in the center containing a white ring around a red-and-blue yin-yang swirl, two tiny white flower dots at the top between the leaf tips, and a small white ribbon bow at the bottom where the branches meet. The badge must be crisp and recognizable even at this small size, drawn with bold shapes and few colors (green, gold, white, red, blue). On the body, a long-sleeved digital pixel camouflage field shirt with a coarse, rough camouflage pattern: large chunky square-pixel blocks (each block about twice as big as a normal pixel-camo block), jagged and irregular clumps of muted green, olive, tan-beige and dark brown with uneven, ragged edges and a few scattered single blocks, clearly rougher and blockier than a fine digital pattern, with a folded-down pointed collar, plain shoulder epaulettes with no buttons, a smooth flat front placket with a hidden closure, and two chest pockets with plain pointed flaps. There are NO round buttons anywhere on the shirt: no buttons on the front placket, none on the pocket flaps, none on the shoulder epaulettes; those areas are plain flat camouflage fabric. A short plain olive-green name tape with a thin dark border sits above the chest pocket on the viewer's left side of the frame, and a longer wide olive-green tape with a thin dark border sits above the chest pocket on the viewer's right side, above the pocket flap. The short tape on the left stays completely blank. The long tape has bold black pixel lettering in one line that reads exactly: 대한민국 육군 ROKA (Korean Hangul letters followed by the Latin letters R-O-K-A), large and evenly spaced, drawn in simple blocky pixel letters so every character is readable. On the pocket flap of the chest pocket on the viewer's right side of the frame (the soldier's left chest), placed at the LEFT end of that flap and not centered, directly below the 2nd and 3rd Hangul letters of the lettering on the long tape above it (the letters 한 and 민 of 대한민국), a small rank patch: a small rectangle of dark olive fabric with exactly two thin black horizontal bars stacked one above the other, nothing else on it, no chevrons. On the upper sleeve on the viewer's left side of the frame, a small rectangular patch showing a national flag design: a white field with a red and blue circle in the center and four black bar symbols in the corners. No other letters or readable text anywhere else in the image.
+```
+
+- 이 사례에서 얻은 요령: 작은 문장(배지)은 "알아볼 수 있게"라고만 쓰면 뭉개진다. **화면 대비 크기(%)**, 바탕 모양, 구성 요소(가지, 원, 꽃, 리본)를 하나씩 적고 `bold shapes and few colors`로 단순화를 지시한다.
+- 좌우 표현은 헷갈리기 쉽다. "페페 기준 왼쪽"은 화면에서 오른쪽이고 "바라보는 기준 왼쪽"은 화면 왼쪽이다. 사용자 말이 어느 기준인지 모호하면 임의로 정하지 말고 한 번 물어본다. 프롬프트에는 `the viewer's right side (the soldier's left)`처럼 두 기준을 함께 적고, "특정 글자 아래, 주머니 왼쪽 끝"처럼 눈에 보이는 기준점을 같이 준다.
+- 글자는 짧을수록 선명하다. 긴 명찰의 "대한민국 육군 ROKA"는 `reads exactly`와 `simple blocky pixel letters`를 써서 읽히게 나왔다. 글자 위치(예: 특정 글자 바로 아래)는 정밀하게 맞지 않을 수 있다.
+- 사용자가 "단추 지워"처럼 요소를 없애라고 하면 `NO round buttons anywhere ... plain flat fabric`처럼 없어야 할 곳을 모두 열거해 적는다.
+- 국기는 실제 제복에 꼭 필요한 패치일 때만 소매 패치 한 개로 쓴다. 그 외 옷에는 `no national flags`를 유지한다.
 
 ## 주의
 

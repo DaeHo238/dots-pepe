@@ -29,3 +29,6 @@ else
 fi
 
 echo "완료: ${OUT}.png, ${OUT}_512.png"
+
+# 구도 점검 (PIL이 있을 때만, 실패해도 생성은 성공으로 본다)
+python3 "$SKILL_DIR/scripts/check_framing.py" "${OUT}_512.png" 2>/dev/null || true

@@ -1,0 +1,33 @@
+{
+  "expressions": {
+    "smirk": {
+      "ko": "씨익",
+      "face": "exactly the same face as the reference image, pixel for pixel: same green Pepe head shape, size, position and slight tilt, same heavy half-closed eyelids, same eye direction and big black pupils with small white highlights, same eyebrows, same wide orange-brown lips (#C8783A tone) with the same dark outline and same lip shape. The ONLY change: the two outer corners of the closed mouth are lifted up by just one or two pixels, a very subtle hint of a smile. Do not widen the mouth, do not add cheek creases, do not raise any eyebrow, do not change the eyes."
+    },
+    "grin": {
+      "ko": "활짝",
+      "face": "same green Pepe head shape, size, position and slight tilt, three-quarter view, same big black pupils with small white highlights, same orange-brown lip color (#C8783A tone) with a dark outline. EXPRESSION: a big, bright, wide-open happy grin. The mouth is wide open in a big smile showing a dark mouth interior and a small pink tongue, the eyes open wide and bright with raised cheeks, no heavy sleepy eyelids."
+    },
+    "disappointed": {
+      "ko": "실망",
+      "face": "same green Pepe head shape, size, position and slight tilt, three-quarter view, same big black pupils with small white highlights, same wide orange-brown lips (#C8783A tone) with a dark outline. EXPRESSION: disappointed and let down. Mouth closed with the lip corners turned downward into a flat frown, the eyelids drooping heavily, the inner ends of the brows slanted up sadly, the pupils looking down and to the side. No tears."
+    },
+    "tears": {
+      "ko": "눈물만",
+      "face": "same green Pepe head shape, size, position and slight tilt, three-quarter view, same big black pupils with small white highlights, same wide orange-brown lips (#C8783A tone) with a dark outline. EXPRESSION: silently crying. Mouth closed with the lips pressed together and the corners trembling slightly downward, the eyes glassy and watery with sad drooping eyelids, and two thin light-blue pixel tear streams running down from the eyes along the cheeks. No open mouth, no sobbing."
+    },
+    "sob": {
+      "ko": "오열",
+      "face": "same green Pepe head shape, size, position and slight tilt, three-quarter view, same orange-brown lip color (#C8783A tone) with a dark outline. EXPRESSION: sobbing uncontrollably. The mouth is wide open in a loud wail showing a dark mouth interior, the eyes squeezed tightly shut with scrunched brows, and thick light-blue pixel tear streams pouring down both cheeks with a few tear drops flying off the face."
+    },
+    "angry": {
+      "ko": "분노",
+      "face": "same green Pepe head shape, size, position and slight tilt, three-quarter view, same big black pupils with small white highlights, same wide orange-brown lips (#C8783A tone) with a dark outline. EXPRESSION: furious anger. Thick dark brows slanted sharply downward toward the center of the face, the eyelids narrowed into a hard glare with the pupils staring forward, a few small red anger vein marks on the forehead, and the mouth closed with the lips pressed tight and the corners pulled sharply downward into a hard scowl."
+    },
+    "scream": {
+      "ko": "소리침",
+      "face": "same green Pepe head shape, size, position and slight tilt, three-quarter view, same orange-brown lip color (#C8783A tone) with a dark outline. EXPRESSION: screaming at the top of his lungs in rage. The mouth is stretched wide open in a loud roar showing a dark mouth interior, the eyes wide and bulging with tiny pupils, thick dark brows slanted sharply downward, red anger vein marks on the forehead, and a few small spit droplets and short motion lines near the mouth."
+    }
+  },
+  "face_end": "Do not change the head shape, size, position or tilt. Only the facial expression described above changes."
+}
