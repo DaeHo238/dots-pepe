@@ -53,7 +53,7 @@ KEEP EXACTLY THE SAME:
 - Face: {FACE_LINE}
 - Framing: square 1:1, do NOT zoom in or move the character. The top of the head is at 17% from the top edge, the right edge of the head is at 87% of the image width, the left edge of the head is at about 38% of the width, and the bottom of the chin is at about 60% from the top.
 - Body: upper body only, shoulders start right under the chin and fill the bottom of the image, torso turned slightly toward the right, cropped at the bottom edge.
-- Any hat or helmet sits firmly ON the head, not above it: its lower edge overlaps and hides the top part of the head, with no gap and no background visible between the hat and the head. Hats and helmets are drawn OVERSIZED: noticeably big, extending past both sides of the head and rising high into the background. The face, eyes and lips keep exactly the same size and position no matter how big the hat or helmet is.
+- Any hat or helmet sits firmly ON the head, not above it: its lower edge overlaps and hides the top part of the head, with no gap and no background visible between the hat and the head. Hats and helmets are drawn at a fixed medium-large size: about 60% of the image width wide (the brim or shell reaching roughly from 20% to 80% of the width) and about 15% of the image height tall, extending a clear distance past both sides of the head. The face, eyes and lips keep exactly the same size and position no matter what hat or helmet is worn.
 
 HAND:
 {HAND_LINE}
@@ -198,9 +198,9 @@ CHANGE ONLY:
 
 ## 주의
 
-- 모자와 헬멧은 기본으로 **크게** 그린다 (사용자 취향). 옷 문구의 모자 앞에 `an OVERSIZED ... cap/hat, noticeably big, with a very wide, tall crown that extends well past both sides of the head` 같은 말을 붙인다. 사용자가 작은 모자를 원하면 템플릿의 `Hats are drawn OVERSIZED` 문장을 빼고 `the hat stays small`로 바꾼다.
+- 모자와 헬멧의 기본 크기는 **폭 약 60%, 높이 약 15%** 로 고정한다 (사용자 확정: 해군 정모 최종본 기준). 템플릿의 크기 문장이 이미 수치로 적혀 있으니 옷 문구에서는 `OVERSIZED` 같은 말을 쓰지 말고 모자 모양만 적는다. 사용자가 더 작거나 큰 모자를 원하면 템플릿의 60%/15%를 새 비율 수치로 바꿔 쓴다 (예: "25% 더 크게"면 폭 75%, 높이 19%).
 - 모자는 `sitting on top of the head`라고 쓰면 머리 위로 붕 뜬다. `worn snugly on the head, its brim resting on the forehead just above the eyelids without covering the eyes`처럼 머리에 얹힌다고 쓴다.
-- 헬멧은 `an OVERSIZED ... helmet, noticeably big and chunky, a wide rounded shell that extends well past both sides of the head and rises high above it`처럼 크게 쓰고, 바이저는 올리고 산소마스크는 빼서 얼굴이 다 보이게 한다. 얼굴이 같이 커지지 않도록 `the whole face, eyes and lips stay fully visible at the same size`를 꼭 붙인다.
+- 헬멧은 `a chunky helmet with a wide rounded shell`처럼 모양만 쓰고 크기는 템플릿 수치에 맡긴다. 바이저는 올리고 산소마스크는 빼서 얼굴이 다 보이게 한다. 얼굴이 같이 커지지 않도록 `the whole face, eyes and lips stay fully visible at the same size`를 꼭 붙인다.
 - **가면은 얼굴 전체에 씌운다** (사용자 결정). 얼굴이 가려져도 괜찮다. 대신 가면을 고정하는 끈 사이와 가면 가장자리로 초록 피부가 보이게 해서 페페임을 드러낸다. 아래 "가면일 때" 문구를 쓴다.
 - 헬멧과 선글라스는 가면이 아니다. 헬멧은 바이저를 올리고, 선글라스는 이마에 올려 얼굴이 보이게 한다.
 - 실존 영화·게임·만화 캐릭터(히어로 등)는 상징적인 마스크·의상·로고를 그대로 넣지 않는다. 개인용이라고 해도 같다. 그런 요청이 오면 그 사실을 한 줄로 알리고, 분위기만 살린 새 디자인으로 그린다. 원작 색 배합·문양·로고를 그대로 쓰면 이미지 안전 필터(`moderation_blocked`)에 막히기도 한다. 막히면 우회하지 말고 원작 요소를 뺀 오리지널 디자인으로 한 번 다시 만든다.
