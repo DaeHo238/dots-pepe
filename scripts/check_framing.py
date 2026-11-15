@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""생성 이미지의 머리 위치·크기가 기준 이미지와 얼마나 다른지 잰다.
+"""Measure how far the head position and size in a generated image differ from the base image.
 
-사용법: check_framing.py <이미지> [--base 기준이미지] [--tol 0.04]
-입술(주황갈색, #C8783A)의 위치와 폭으로 머리가 움직이거나 커졌는지 본다.
-모자·헬멧·초록 몸통에 영향받지 않아서 초록 픽셀 기준보다 믿을 만하다.
-  입 가로 / 입 세로 : 입 중심 위치 (이미지 크기 대비 %)  -> tol(기본 4%p) 넘으면 WARN
-  입 폭            : 기준 대비 비율 -> 0.88~1.12배 밖이면 WARN (--expr이면 0.65~1.30배)
-WARN이면 종료 코드 1. 입을 찾지 못하면(전체 가면, 입을 크게 벌린 표정 등) SKIP, 종료 코드 0.
-입을 크게 벌리거나 눈물 등으로 입 모양이 달라지는 표정은 폭이 달라질 수 있으니 눈으로 함께 확인한다.
+Usage: check_framing.py <image> [--base base_image] [--tol 0.04] [--expr]
+Uses the position and width of the lips (orange-brown, #C8783A) to see whether the head moved or grew.
+Hats, helmets and a green body do not affect it, so it is more reliable than looking at green pixels.
+  mouth x / mouth y : center of the mouth (% of the image size)  -> WARN if off by more than tol (default 4 points)
+  mouth width       : ratio to the base -> WARN outside 0.88-1.12x (0.65-1.30x with --expr)
+Exit code 1 on WARN. SKIP (exit code 0) if no lips are found (full-face mask, mouth covered by a prop).
+Expressions that change the mouth shape (wide open mouth, tears) can change the width, so also check by eye.
 """
 import argparse
 import os
@@ -19,7 +19,7 @@ DEFAULT_BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "a
 
 
 def lips_component(img):
-    """입술 색(주황갈색)의 연결 덩어리 중 가장 큰 것의 경계 상자를 비율로 돌려준다."""
+    """Return the bounding box (as ratios) of the largest connected blob of lip-colored (orange-brown) pixels."""
     w, h = img.size
     px = img.load()
     x0, x1, y0, y1 = int(w * 0.35), int(w * 0.95), int(h * 0.35), int(h * 0.68)
@@ -67,38 +67,38 @@ def main():
     ap.add_argument("--base", default=DEFAULT_BASE)
     ap.add_argument("--tol", type=float, default=0.04)
     ap.add_argument("--expr", action="store_true",
-                    help="표정을 바꾼 이미지(입 모양이 달라짐)면 입 폭 허용 범위를 넓힌다")
+                    help="for images with a changed expression (the mouth shape differs), widen the allowed mouth width range")
     args = ap.parse_args()
 
     base = measure(args.base)
     cur = measure(args.image)
     if base is None:
-        print("기준 이미지를 측정하지 못했습니다.", file=sys.stderr)
+        print("Could not measure the base image.", file=sys.stderr)
         return 2
     if cur is None:
-        print("SKIP: 입술을 찾지 못했습니다 (가면, 입을 가린 소품 등). 눈으로 확인하세요.")
+        print("SKIP: no lips found (full-face mask, mouth covered by a prop, etc.). Check by eye.")
         return 0
 
     bad = []
-    print(f"{'항목':<8}{'기준':>8}{'결과':>8}{'차이':>9}")
-    for k, label in (("cx", "입 가로"), ("cy", "입 세로")):
+    print(f"{'item':<12}{'base':>8}{'result':>8}{'diff':>9}")
+    for k, label in (("cx", "mouth x"), ("cy", "mouth y")):
         d = cur[k] - base[k]
         flag = ""
         if abs(d) > args.tol:
-            flag = "  <-- 벗어남"
+            flag = "  <-- off"
             bad.append(k)
-        print(f"{label:<8}{base[k]*100:>7.1f}%{cur[k]*100:>7.1f}%{d*100:>+8.1f}%p{flag}")
+        print(f"{label:<12}{base[k]*100:>7.1f}%{cur[k]*100:>7.1f}%{d*100:>+7.1f}pt{flag}")
     ratio = cur["w"] / base["w"]
     flag = ""
     lo, hi = (0.65, 1.30) if args.expr else (0.88, 1.12)
     if not (lo <= ratio <= hi):
-        flag = "  <-- 벗어남"
+        flag = "  <-- off"
         bad.append("w")
-    print(f"{'입 폭':<8}{base['w']*100:>7.1f}%{cur['w']*100:>7.1f}%{ratio:>8.2f}배{flag}")
+    print(f"{'mouth width':<12}{base['w']*100:>7.1f}%{cur['w']*100:>7.1f}%{ratio:>8.2f}x{flag}")
     if bad:
-        print("WARN: 머리가 기준 구도에서 벗어났을 수 있습니다 -> 이미지를 눈으로 확인하고 재생성을 고려하세요.")
+        print("WARN: the head may have moved or grown from the base framing -> check the image by eye and consider regenerating.")
         return 1
-    print("PASS: 머리 위치와 크기가 기준 범위 안입니다.")
+    print("PASS: head position and size are within the base range.")
     return 0
 
 

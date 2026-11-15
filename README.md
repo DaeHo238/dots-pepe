@@ -1,167 +1,171 @@
+**English** | [한국어](README.ko.md)
+
 # dots-pepe
 
-픽셀아트 Pepe 한 장을 기준으로 **옷 · 손 · 배경 · 표정**만 바꿔 새 이미지를 만들어 주는 [Claude Code](https://claude.com/claude-code) 스킬입니다.
+A [Claude Code](https://claude.com/claude-code) skill that makes new images from a single pixel-art Pepe by changing only the **outfit, hand, background and expression**.
 
-텍스트 프롬프트만으로 이미지를 만들면 매번 다른 Pepe가 나옵니다. 이 스킬은 기준 이미지(`assets/pepe_base.png`)를 **참조 이미지(편집 모드)** 로 이미지 생성 도구에 넘기고, 프롬프트에서 "고정할 것"과 "바꿀 것"을 분명히 나눠서 얼굴 모양과 구도를 지킵니다.
+Generating images from a text prompt alone gives you a different Pepe every time. This skill passes the base image (`assets/pepe_base.png`) to the image generator as a **reference image (edit mode)** and splits the prompt clearly into "keep" and "change", so the face shape and framing stay the same.
 
-## 예시
+## Example
 
-<img src="examples/gatsby.png" alt="턱시도에 나비넥타이를 매고 샴페인 잔을 든 Pepe, 배경은 밤하늘의 불꽃놀이" width="256">
+<img src="examples/gatsby.png" alt="Pepe in a tuxedo and bow tie holding a champagne glass, with fireworks in the night sky behind him" width="256">
 
-`/dots-pepe 턱시도 입고 샴페인 잔을 든 개츠비 페페, 배경은 불꽃놀이` 같은 요청으로 만든 이미지입니다.
+Made with a request like `/dots-pepe Gatsby Pepe in a tuxedo holding a champagne glass, fireworks in the background`.
 
-| 칸 | 값 |
+| Slot | Value |
 |---|---|
-| 옷 | 검은 턱시도, 흰 셔츠, 검은 나비넥타이 |
-| 손 | 샴페인 잔 |
-| 배경 | 어두운 밤하늘의 불꽃놀이 |
-| 표정 | 기본 (느끼한 미소) |
+| Outfit | Black tuxedo, white shirt, black bow tie |
+| Hand | Champagne glass |
+| Background | Fireworks in a dark night sky |
+| Expression | Default (smug smile) |
 
-## 어떻게 동작하나
+## How it works
 
-1. 사용자가 "해적 페페 그려줘"처럼 말하면 Claude가 요청에서 네 칸(옷, 손, 배경, 표정)을 뽑습니다.
-2. `SKILL.md`의 프롬프트 템플릿을 영어로 채웁니다. 말하지 않은 칸은 기본값을 유지합니다.
-3. `scripts/generate.sh`가 Codex CLI로 기준 이미지를 편집해 PNG를 만듭니다.
-4. Claude가 결과를 기준 이미지와 비교해, 얼굴이 바뀌었거나 캐릭터가 확대·이동했으면 한 번 더 생성합니다.
+1. When you say something like "draw a pirate Pepe", Claude extracts four slots from the request: outfit, hand, background and expression.
+2. It fills the prompt template in `SKILL.md` in English. Slots you did not mention keep their defaults.
+3. `scripts/generate.sh` edits the base image through the Codex CLI and writes a PNG.
+4. Claude compares the result with the base image and generates once more if the face changed or the character was enlarged or moved.
 
-## 고정되는 것 / 바뀌는 것
+## What stays fixed / what changes
 
-| 고정 | 바뀜 |
+| Fixed | Changes |
 |---|---|
-| 픽셀아트 화풍 (약 128x128 격자, 1픽셀 어두운 외곽선) | 옷 |
-| 머리 모양, 크기, 기울기, 위치 | 손 (든 물건 또는 손동작) |
-| 정사각 구도, 상반신, 아래쪽에서 잘림 | 배경 |
-| 눈 크기, 입술 색과 외곽선 | 표정 |
+| Pixel-art style (about 128x128 grid, 1-pixel dark outlines) | Outfit |
+| Head shape, size, tilt and position | Hand (held item or gesture) |
+| Square framing, upper body, cropped at the bottom | Background |
+| Eye size, lip color and outline | Expression |
 
-기준 이미지는 파란 티셔츠를 입은 Pepe 상반신, 연보라 단색 배경, 손이 보이지 않는 구도입니다.
+The base image shows Pepe from the chest up in a blue t-shirt on a flat pale lavender background, with no hands visible.
 
-## 기본값
+## Defaults
 
-말하지 않은 칸은 아래 값을 씁니다.
+Slots you do not mention use these values.
 
-| 칸 | 기본값 |
+| Slot | Default |
 |---|---|
-| 옷 | 밝은 파랑 라운드넥 티셔츠 |
-| 손 | 없음 (양팔이 아래로 내려가 화면 밖) |
-| 배경 | 연보라 회색 단색 (`#D4DAF2`) |
-| 표정 | 느끼한 미소 (기준 이미지 그대로) |
+| Outfit | Plain bright blue crew-neck t-shirt |
+| Hand | None (both arms hang down, out of frame) |
+| Background | Flat pale lavender-gray (`#D4DAF2`) |
+| Expression | Smug smile (as in the base image) |
 
-"해적 페페"처럼 컨셉만 말하면 옷과 배경은 컨셉에 맞게 채웁니다. 손은 컨셉에 꼭 어울리는 물건이 있을 때만 넣고, 넣었다면 알려 줍니다.
+If you give only a concept such as "pirate Pepe", the outfit and background are filled in to fit it. A hand is added only when there is an item that clearly belongs to the concept, and you are told when one is added.
 
-## 손
+## Hands
 
-- **없음**: 손 얘기가 없으면 손을 그리지 않습니다.
-- **든 물건**: 칼, 국자, 마이크, 잔 등. 손은 화면 왼쪽 아래 한 곳에만 그리고, 물건은 왼쪽 가장자리 안에 들어오게 줄입니다.
-- **손동작**: 엄지 척, 브이, 손 흔들기, 가리키기. 경례는 손이 이마로 가야 해서 위치 고정과 충돌하므로 다른 동작을 제안합니다.
+- **None**: if hands are not mentioned, none are drawn.
+- **Held item**: a knife, ladle, microphone, glass and so on. The hand is always drawn in the lower left of the frame, and the item is shrunk to fit inside the left edge.
+- **Gesture**: thumbs-up, peace sign, waving, pointing. A salute needs the hand at the forehead, which conflicts with the fixed hand position, so another gesture is suggested.
 
-## 표정 (7가지)
+## Expressions (7)
 
-| 이름 | 설명 |
+| Key | Description |
 |---|---|
-| 씨익 | 입꼬리만 1~2픽셀 살짝 올라감. 눈과 눈썹은 기본 그대로 |
-| 활짝 | 입을 크게 벌려 웃음, 눈이 또렷하게 열림 |
-| 실망 | 입꼬리가 처지고 눈꺼풀이 늘어짐, 눈동자는 아래 옆을 봄 |
-| 눈물만 | 입은 다문 채 입꼬리가 떨리고, 하늘색 눈물 두 줄기 |
-| 오열 | 눈을 꽉 감고 입을 크게 벌려 울부짖음, 눈물이 쏟아짐 |
-| 분노 | 눈썹이 가운데로 날카롭게 꺾이고 노려봄, 이마에 힘줄 표시 |
-| 소리침 | 분노해서 입을 크게 벌려 고함, 침방울과 움직임 선 |
+| `smirk` | Only the mouth corners lift by 1-2 pixels. Eyes and brows stay as in the default |
+| `grin` | Mouth wide open in a big smile, eyes open and bright |
+| `disappointed` | Mouth corners droop, heavy eyelids, pupils look down and sideways |
+| `tears` | Mouth closed with trembling corners, two thin light-blue tear streams |
+| `sob` | Eyes squeezed shut, mouth wide open in a wail, tears pouring |
+| `angry` | Brows slanted sharply toward the center, hard glare, anger veins on the forehead |
+| `scream` | Mouth wide open in a roar, bulging eyes, spit droplets and motion lines |
 
-말하지 않으면 기본 표정을 씁니다. 표정 강도는 사용자가 말한 만큼만 씁니다. 눈 흘기기, 눈썹 올리기, 입 넓히기를 임의로 더하면 Pepe가 너무 느끼해집니다.
+If you do not mention an expression, the default one is used. The intensity is exactly as strong as you ask for. Adding glances, raised brows or a wider mouth on its own makes Pepe far too smug.
 
-## 모자, 헬멧, 가면
+## Hats, helmets and masks
 
-- 모자와 헬멧의 기본 크기는 **폭 약 60%, 높이 약 15%** 로 고정입니다. 더 작거나 큰 모자를 원하면 그렇게 말하세요.
-- 모자가 머리 위로 붕 뜨지 않도록 "머리에 얹힌다"고 지시하고, 얼굴과 눈, 입술은 같은 크기와 위치를 유지합니다.
-- 헬멧은 바이저를 올려 얼굴이 보이게 합니다. 선글라스는 이마에 올립니다.
-- 모자 크기는 "작게/크게"만으로는 반응이 약해서, 폭·높이를 화면 비율(%)로 적어 "25% 더 크게"처럼 지시합니다. 그래도 정확하진 않고, 모자를 키울수록 머리도 같이 커지기 쉽습니다.
-- **가면**은 얼굴 전체를 덮습니다. 대신 끈 사이와 가면 가장자리로 초록 피부가 보이게 해서 Pepe임을 드러냅니다. 가면을 쓰면 표정 칸은 무시합니다.
+- The default size of hats and helmets is fixed at **about 60% of the image width and about 15% of the image height**. Ask if you want a smaller or bigger one.
+- Hats are described as resting on the head so they do not float above it, and the face, eyes and lips keep the same size and position.
+- Helmets have the visor raised so the face stays visible. Sunglasses are pushed up onto the forehead.
+- Wording like "smaller/bigger" barely moves the hat size, so the width and height are given as percentages of the image, such as "25% bigger". It is still not exact, and a bigger hat tends to make the head grow with it.
+- A **mask** covers the whole face. Green skin shows between the straps and at the mask edges so Pepe is still recognizable. With a mask, the expression slot is ignored.
 
-## 설치
+## Install
 
 ```bash
 git clone https://github.com/DaeHo238/dots-pepe ~/.claude/skills/dots-pepe
 ```
 
-필요한 것:
+Requirements:
 
 - Claude Code
-- [Codex CLI](https://github.com/openai/codex) 설치 및 로그인: `npm i -g @openai/codex`
-- macOS의 `sips` (없으면 Python Pillow로 대체)
+- [Codex CLI](https://github.com/openai/codex), installed and logged in: `npm i -g @openai/codex`
+- `sips` on macOS (falls back to Python Pillow if it is missing)
 
-## 사용
+## Usage
 
-Claude Code에서 스킬 이름과 함께 말합니다.
+In Claude Code, call the skill by name and describe what you want. Korean works too.
 
 ```text
+/dots-pepe draw a pirate Pepe
+/dots-pepe astronaut Pepe holding a star-shaped lollipop, space background
+/dots-pepe tired developer Pepe, expression: tears
 /dots-pepe 해적 페페 그려줘
-/dots-pepe 우주비행사 페페, 손에는 별 모양 막대사탕, 배경은 우주
-/dots-pepe 피곤에 찌든 개발자 페페, 표정은 눈물만
 ```
 
-결과는 현재 폴더에 저장됩니다.
+Results are saved to the current folder.
 
-| 파일 | 내용 |
+| File | Contents |
 |---|---|
-| `<이름>_prompt.txt` | 생성에 쓴 전체 영어 프롬프트 |
-| `<이름>.png` | 원본 크기 이미지 |
-| `<이름>_512.png` | 512x512로 줄인 이미지 |
-| `<이름>_codex.log` | Codex 실행 로그 |
+| `<name>_prompt.txt` | The full English prompt that was used |
+| `<name>.png` | Image at original size |
+| `<name>_512.png` | Image scaled down to 512x512 |
+| `<name>_codex.log` | Codex run log |
 
-프롬프트만 받고 싶으면 "프롬프트만 줘"라고 말하세요. 이미지는 만들지 않고, 기준 이미지를 Codex 앱에 직접 첨부해서 쓰면 됩니다.
+If you only want the prompt, say "prompt only". No image is generated, and you can attach the base image yourself in the Codex app.
 
-## 표정 세트 (여러 표정을 한 번에)
+## Expression set (several expressions at once)
 
-기본 프롬프트 하나로 표정 7장을 병렬 생성합니다. 옷, 손, 배경은 그대로 두고 표정 문구만 바꿉니다.
-
-```bash
-python3 scripts/generate_set.py <이름>_prompt.txt <이름>                 # 7개 전부
-python3 scripts/generate_set.py <이름>_prompt.txt <이름> smirk sob angry # 일부만
-```
-
-표정 키: `smirk`(씨익) `grin`(활짝) `disappointed`(실망) `tears`(눈물만) `sob`(오열) `angry`(분노) `scream`(소리침). 표정 문구는 `scripts/expressions.json`에 있습니다. 7장을 한꺼번에 돌려서 Codex 사용량을 많이 씁니다.
-
-## 구도 자동 점검
-
-이미지를 만들면 `scripts/check_framing.py`가 자동으로 돌아갑니다. 입술(주황갈색)의 위치와 폭으로 머리가 움직이거나 커졌는지 재서 PASS, WARN, SKIP을 출력합니다.
+Generates 7 expressions in parallel from one base prompt. The outfit, hand and background stay the same; only the expression text changes.
 
 ```bash
-python3 scripts/check_framing.py <이미지.png>          # 기본
-python3 scripts/check_framing.py <이미지.png> --expr   # 표정을 바꾼 이미지 (입 폭 허용 범위를 넓힘)
+python3 scripts/generate_set.py <name>_prompt.txt <name>                  # all 7
+python3 scripts/generate_set.py <name>_prompt.txt <name> smirk sob angry  # only some
 ```
 
-- 입 가로·세로 위치가 기준에서 4%p 넘게 벗어나거나, 입 폭이 기준의 0.88~1.12배(`--expr`이면 0.65~1.30배) 밖이면 WARN입니다.
-- 입을 찾지 못하면(전체 가면, 입을 가린 소품) SKIP입니다. 눈으로 확인하세요.
-- 모자나 몸통 색에 영향받지 않습니다. 일부러 옮기거나 확대한 이미지는 잡지만, 실제 생성물에서 WARN이 난 적은 아직 없어서 보조 점검으로만 쓰세요.
-- Pillow(`pip install pillow`)가 필요합니다. 없으면 생성 후 점검만 조용히 건너뜁니다.
+Expression keys: `smirk` `grin` `disappointed` `tears` `sob` `angry` `scream`. The expression texts live in `scripts/expressions.json`. Running 7 at once uses a lot of Codex quota.
 
-## 알아 둘 점
+## Automatic framing check
 
-- **개인정보**: 이미지를 만들 때 기준 이미지와 프롬프트가 OpenAI로 전송됩니다.
-- **실존 캐릭터**: 영화·게임·만화 캐릭터의 상징적인 마스크, 의상, 로고는 그대로 그리지 않고, 분위기만 살린 새 디자인으로 그립니다. 원작 그대로 요청하면 이미지 안전 필터에 막히기도 합니다.
-- **글자와 로고**: 이미지 모델은 글자와 상표를 잘못 그리곤 합니다. 기본은 "글자 없음"을, 상표가 있는 소품에는 "표면 전체 민무늬"를 지시합니다. 짧은 문구는 "정확히 이 문구로, 크고 간격 있게, 단순한 블록 글자로"라고 지시하면 읽히게 나오기도 하지만, 길수록 깨지기 쉽고 글자 위치는 정밀하게 맞지 않습니다.
-- **국기**: 국기가 꼭 필요한 옷이 아니면 "국기와 국가 문양 없음"을 넣어 엉뚱한 패치를 막습니다.
-- **실제 군복·제복**: 글 검색만으로는 모양을 확인하기 어렵습니다. 참고 사진에 보이는 옷 디테일(모자 모양, 주머니·명찰·계급장 위치, 소매 길이)만 옮기고, 사진 속 인물은 따라 그리지 않습니다.
-- **구도 이탈**: 가장 흔한 실패는 캐릭터 확대(특히 모자나 헬멧)와 머리 이동입니다. 입을 크게 벌리는 표정(활짝, 오열, 소리침)에서도 생기기 쉬워서, 생성 후 구도를 기준과 비교하고, `check_framing.py`가 자동으로 점검합니다.
+After an image is generated, `scripts/check_framing.py` runs automatically. It uses the position and width of the lips (orange-brown) to see whether the head moved or grew, and prints PASS, WARN or SKIP.
 
-## 폴더 구조
+```bash
+python3 scripts/check_framing.py <image.png>          # default
+python3 scripts/check_framing.py <image.png> --expr   # image with a changed expression (wider allowed mouth width)
+```
+
+- WARN if the horizontal or vertical mouth position is off the base by more than 4 percentage points, or the mouth width is outside 0.88-1.12x of the base (0.65-1.30x with `--expr`).
+- SKIP if no lips are found (a full-face mask, a prop covering the mouth). Check by eye.
+- It is not affected by hats or by body color. It catches images that were deliberately shifted or enlarged, but it has not flagged a real generated image yet, so treat it as a secondary check.
+- Needs Pillow (`pip install pillow`). Without it, only the post-generation check is silently skipped.
+
+## Things to know
+
+- **Privacy**: when an image is generated, the base image and the prompt are sent to OpenAI.
+- **Existing characters**: the iconic masks, costumes and logos of film, game and comic characters are not drawn as is; a new design that keeps only the mood is drawn instead. Requesting the original as is can also be blocked by the image safety filter.
+- **Text and logos**: image models often draw text and brand marks wrongly. The skill defaults to "no text" and tells the model that branded props have a plain surface. Short phrases can come out readable if you say "exactly this text, large, evenly spaced, in simple blocky pixel letters", but longer text breaks more easily and its position is not matched precisely.
+- **Flags**: unless the outfit really needs one, "no national flags or country insignia" is added to stop stray patches.
+- **Real military uniforms**: text searches alone cannot confirm the details. Only the clothing details visible in a reference photo (hat shape, positions of pockets, name tags and rank, sleeve length) are copied, and the person in the photo is not drawn.
+- **Framing drift**: the most common failure is the character being enlarged (especially with a hat or helmet) or the head shifting. It also happens easily with wide-open-mouth expressions (grin, sob, scream), so the framing is compared with the base after generation, and `check_framing.py` checks it automatically.
+
+## Folder structure
 
 ```text
 dots-pepe/
-├── SKILL.md              스킬 본문: 작업 순서, 프롬프트 템플릿, 표정·손 문구, 주의사항
-├── README.md             이 문서
+├── SKILL.md              The skill itself: workflow, prompt template, expression and hand texts, notes
+├── README.md             This document (English)
+├── README.ko.md          Korean version
 ├── assets/
-│   └── pepe_base.png     기준 이미지 (512x512 픽셀아트)
+│   └── pepe_base.png     Base image (512x512 pixel art)
 ├── examples/
-│   └── gatsby.png        README 예시 이미지
+│   └── gatsby.png        README example image
 └── scripts/
-    ├── generate.sh       Codex CLI로 이미지 생성, 512 축소, 구도 점검
-    ├── generate_set.py   표정 7장 병렬 생성
-    ├── expressions.json  표정별 프롬프트 문구
-    └── check_framing.py  입술 위치·폭으로 구도 점검
+    ├── generate.sh       Generate with the Codex CLI, scale to 512, check framing
+    ├── generate_set.py   Generate 7 expressions in parallel
+    ├── expressions.json  Prompt text for each expression
+    └── check_framing.py  Framing check from lip position and width
 ```
 
-## 커스터마이즈
+## Customizing
 
-- 기본 옷, 배경, 표정을 바꾸려면 `SKILL.md`의 "기본값" 섹션을 수정합니다.
-- 다른 기준 이미지를 쓰려면 `assets/pepe_base.png`를 교체하고, `SKILL.md` 템플릿의 구도 수치(머리 위 17%, 오른쪽 87%, 턱 60% 등)를 새 이미지에 맞게 고칩니다. `check_framing.py`는 기준 이미지의 입술 색(`#C8783A` 계열)을 쓰므로 입술 색이 다르면 스크립트의 색 범위도 고칩니다.
-- 표정을 추가하려면 `SKILL.md`와 `scripts/expressions.json` 두 곳에 같은 문구를 넣습니다.
+- To change the default outfit, background or expression, edit the "Defaults" section of `SKILL.md`.
+- To use a different base image, replace `assets/pepe_base.png` and update the framing numbers in the `SKILL.md` template (head top 17%, right edge 87%, chin 60%, and so on) to match. `check_framing.py` relies on the lip color of the base image (around `#C8783A`), so if your lips are a different color, adjust the color range in the script too.
+- To add an expression, put the same text in both `SKILL.md` and `scripts/expressions.json`.

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""기본 프롬프트 한 개로 표정 여러 장을 병렬 생성하고, 각 결과의 구도를 점검한다.
+"""Generate several expressions in parallel from one base prompt and check the framing of each result.
 
-사용법: generate_set.py <프롬프트 파일> <이름> [표정 키 ...]
-  표정 키: smirk grin disappointed tears sob angry scream (생략하면 7개 전부)
-  결과: <이름>_<표정>.png, <이름>_<표정>_512.png, <이름>_<표정>_prompt.txt
-기본 프롬프트에서 `- Face:` 줄과 마지막 줄의 표정 문구만 바꾸고 나머지(옷, 손, 배경)는 그대로 쓴다.
+Usage: generate_set.py <prompt file> <name> [expression key ...]
+  Keys: smirk grin disappointed tears sob angry scream (all 7 if omitted)
+  Output: <name>_<key>.png, <name>_<key>_512.png, <name>_<key>_prompt.txt
+Only the `- Face:` line and the last line of the base prompt are swapped for each expression;
+the rest (outfit, hand, background) is reused unchanged.
 """
 import json
 import os
@@ -41,7 +42,7 @@ def main():
     keys = keys or list(ex)
     unknown = [k for k in keys if k not in ex]
     if unknown:
-        print("알 수 없는 표정:", unknown, "| 가능:", list(ex))
+        print("Unknown expression:", unknown, "| available:", list(ex))
         return 2
 
     base_lines = open(prompt_file, encoding="utf-8").read().split("\n")
@@ -52,7 +53,7 @@ def main():
         open(path, "w", encoding="utf-8").write("\n".join(build(base_lines, ex[k]["face"], data["face_end"])))
         jobs.append((k, path, out_name))
 
-    print(f"{len(jobs)}장을 병렬 생성합니다 ({', '.join(ex[k]['ko'] for k in keys)}) ...", flush=True)
+    print(f"Generating {len(jobs)} images in parallel ({', '.join(keys)}) ...", flush=True)
     with ThreadPoolExecutor(max_workers=len(jobs)) as pool:
         results = list(pool.map(run, jobs))
 
@@ -60,12 +61,12 @@ def main():
     for key, out_name, code, tail in results:
         if code != 0:
             failed += 1
-            print(f"[실패] {ex[key]['ko']}: {tail}")
+            print(f"[FAILED] {key}: {tail}")
             continue
         chk = subprocess.run([sys.executable, os.path.join(HERE, "check_framing.py"), f"{out_name}_512.png", "--expr"],
                              capture_output=True, text=True)
-        verdict = chk.stdout.strip().splitlines()[-1] if chk.stdout.strip() else "점검 불가"
-        print(f"[완료] {ex[key]['ko']:<4} {out_name}_512.png  | {verdict}")
+        verdict = chk.stdout.strip().splitlines()[-1] if chk.stdout.strip() else "check unavailable"
+        print(f"[done] {key:<13} {out_name}_512.png  | {verdict}")
     return 1 if failed else 0
 
 
