@@ -2,7 +2,7 @@
 
 # dots-pepe
 
-A [Claude Code](https://claude.com/claude-code) skill that makes new images from a single pixel-art Pepe by changing only the **outfit, hand, background and expression**.
+An agent skill (a folder with a `SKILL.md`) that makes new images from a single pixel-art Pepe by changing only the **outfit, hand, background and expression**.
 
 Generating images from a text prompt alone gives you a different Pepe every time. This skill passes the base image (`assets/pepe_base.png`) to the image generator as a **reference image (edit mode)** and splits the prompt clearly into "keep" and "change", so the face shape and framing stay the same.
 
@@ -21,10 +21,10 @@ Made with a request like `/dots-pepe Gatsby Pepe in a tuxedo holding a champagne
 
 ## How it works
 
-1. When you say something like "draw a pirate Pepe", Claude extracts four slots from the request: outfit, hand, background and expression.
+1. When you say something like "draw a pirate Pepe", The agent extracts four slots from the request: outfit, hand, background and expression.
 2. It fills the prompt template in `SKILL.md` in English. Slots you did not mention keep their defaults.
 3. `scripts/generate.sh` edits the base image through the Codex CLI and writes a PNG.
-4. Claude compares the result with the base image and generates once more if the face changed or the character was enlarged or moved.
+4. The agent compares the result with the base image and generates once more if the face changed or the character was enlarged or moved.
 
 ## What stays fixed / what changes
 
@@ -81,18 +81,18 @@ If you do not mention an expression, the default one is used. The intensity is e
 ## Install
 
 ```bash
-git clone https://github.com/DaeHo238/dots-pepe ~/.claude/skills/dots-pepe
+git clone https://github.com/DaeHo238/dots-pepe <your-agent-skills-dir>/dots-pepe
 ```
 
 Requirements:
 
-- Claude Code
+- An AI coding agent that supports `SKILL.md` skills and can run shell commands
 - [Codex CLI](https://github.com/openai/codex), installed and logged in: `npm i -g @openai/codex`
 - `sips` on macOS (falls back to Python Pillow if it is missing)
 
 ## Usage
 
-In Claude Code, call the skill by name and describe what you want. Korean works too.
+In your agent, call the skill by name and describe what you want. Korean works too.
 
 ```text
 /dots-pepe draw a pirate Pepe

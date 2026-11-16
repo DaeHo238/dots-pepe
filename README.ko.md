@@ -2,7 +2,7 @@
 
 # dots-pepe
 
-픽셀아트 Pepe 한 장을 기준으로 **옷 · 손 · 배경 · 표정**만 바꿔 새 이미지를 만들어 주는 [Claude Code](https://claude.com/claude-code) 스킬입니다.
+픽셀아트 Pepe 한 장을 기준으로 **옷 · 손 · 배경 · 표정**만 바꿔 새 이미지를 만들어 주는 에이전트 스킬(`SKILL.md`가 들어 있는 폴더)입니다.
 
 텍스트 프롬프트만으로 이미지를 만들면 매번 다른 Pepe가 나옵니다. 이 스킬은 기준 이미지(`assets/pepe_base.png`)를 **참조 이미지(편집 모드)** 로 이미지 생성 도구에 넘기고, 프롬프트에서 "고정할 것"과 "바꿀 것"을 분명히 나눠서 얼굴 모양과 구도를 지킵니다.
 
@@ -21,10 +21,10 @@
 
 ## 어떻게 동작하나
 
-1. 사용자가 "해적 페페 그려줘"처럼 말하면 Claude가 요청에서 네 칸(옷, 손, 배경, 표정)을 뽑습니다.
+1. 사용자가 "해적 페페 그려줘"처럼 말하면 에이전트가 요청에서 네 칸(옷, 손, 배경, 표정)을 뽑습니다.
 2. `SKILL.md`의 프롬프트 템플릿을 영어로 채웁니다. 말하지 않은 칸은 기본값을 유지합니다.
 3. `scripts/generate.sh`가 Codex CLI로 기준 이미지를 편집해 PNG를 만듭니다.
-4. Claude가 결과를 기준 이미지와 비교해, 얼굴이 바뀌었거나 캐릭터가 확대·이동했으면 한 번 더 생성합니다.
+4. 에이전트가 결과를 기준 이미지와 비교해, 얼굴이 바뀌었거나 캐릭터가 확대·이동했으면 한 번 더 생성합니다.
 
 ## 고정되는 것 / 바뀌는 것
 
@@ -81,18 +81,18 @@
 ## 설치
 
 ```bash
-git clone https://github.com/DaeHo238/dots-pepe ~/.claude/skills/dots-pepe
+git clone https://github.com/DaeHo238/dots-pepe <사용하는 에이전트의 스킬 폴더>/dots-pepe
 ```
 
 필요한 것:
 
-- Claude Code
+- `SKILL.md` 스킬을 지원하고 셸 명령을 실행할 수 있는 AI 코딩 에이전트
 - [Codex CLI](https://github.com/openai/codex) 설치 및 로그인: `npm i -g @openai/codex`
 - macOS의 `sips` (없으면 Python Pillow로 대체)
 
 ## 사용
 
-Claude Code에서 스킬 이름과 함께 말합니다.
+사용하는 에이전트에서 스킬 이름과 함께 말합니다.
 
 ```text
 /dots-pepe 해적 페페 그려줘

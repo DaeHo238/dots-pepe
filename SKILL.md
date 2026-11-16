@@ -25,7 +25,7 @@ Text prompts alone produce a different Pepe every time. The most reliable way to
    - If only a concept arrives ("pirate Pepe"), fill outfit and background to fit the concept. Add a hand only when there is an item that clearly belongs to the concept, and if you add one, tell the user in one line.
 2. In the template below, fill `{HAND_LINE}` with the text for the chosen `HAND` type (see "Hand texts"). Fill `{FACE_LINE}` and `{FACE_END}` with the text for the chosen `EXPRESSION` (see "Expression texts").
 3. Fill the template to build the final prompt. Write the prompt in English (image models follow English more accurately).
-4. Generate the image. Claude has no image generation tool, so call the **Codex CLI (GPT image generation)**.
+4. Generate the image. The agent has no image generation tool, so call the **Codex CLI (GPT image generation)**.
    1. Save the finished English prompt to `<name>_prompt.txt` in the current folder. `<name>` is the concept in lowercase English (e.g. `pepe_pirate`).
    2. Run the bundled script. Generation takes 1-3 minutes, so give the Bash call a timeout of 600000.
       ```bash
