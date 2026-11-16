@@ -21,7 +21,7 @@ Made with a request like `/dots-pepe Gatsby Pepe in a tuxedo holding a champagne
 
 ## How it works
 
-1. When you say something like "draw a pirate Pepe", The agent extracts four slots from the request: outfit, hand, background and expression.
+1. When you say something like "draw a pirate Pepe", the agent extracts four slots from the request: outfit, hand, background and expression.
 2. It fills the prompt template in `SKILL.md` in English. Slots you did not mention keep their defaults.
 3. `scripts/generate.sh` edits the base image through the Codex CLI and writes a PNG.
 4. The agent compares the result with the base image and generates once more if the face changed or the character was enlarged or moved.
